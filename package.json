@@ -1,0 +1,81 @@
+{
+  "name": "tinkerwell-clone",
+  "version": "0.1.0",
+  "description": "A Tinkerwell-inspired PHP code runner built with Electron + Vue 3",
+  "type": "module",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev -- --no-sandbox",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "package": "electron-builder",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .vue,.ts,.tsx --fix"
+  },
+  "keywords": [
+    "php",
+    "tinker",
+    "electron",
+    "vue"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.8.0",
+    "@types/node": "^20.14.0",
+    "@types/uuid": "^10.0.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/eslint-config-typescript": "^13.0.0",
+    "autoprefixer": "^10.4.19",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "electron-vite": "^2.3.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1",
+    "vue-tsc": "^2.0.21"
+  },
+  "dependencies": {
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@monaco-editor/loader": "^1.4.0",
+    "electron-store": "^8.2.0",
+    "monaco-editor": "^0.50.0",
+    "pinia": "^2.1.7",
+    "uuid": "^14.0.0",
+    "vite-plugin-monaco-editor": "^1.1.0",
+    "vue": "^3.4.29",
+    "vue-router": "^4.3.3"
+  },
+  "build": {
+    "appId": "com.tinkerwell-clone.app",
+    "productName": "TinkerwellClone",
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "out/main/**/*",
+      "out/preload/**/*",
+      "out/renderer/**/*"
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    }
+  }
+}
