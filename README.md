@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="TinkerwellClone logo" width="120" />
+  <img src="logo.png" alt="TinkerwellClone logo" width="600" />
 </p>
 
 # TinkerwellClone
