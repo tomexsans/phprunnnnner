@@ -1,8 +1,21 @@
 <p align="center">
-  <img src="logo.png" alt="TinkerwellClone logo" width="600" />
+  <img src="logo.png" alt="PHPRunnnnner logo" width="600" />
 </p>
 
-# TinkerwellClone
+
+<p align="center">
+  <img src="imgs/sample1.png" alt="PHPRunnnnner logo" width="700" />
+</p>
+
+<p align="center">
+  <img src="imgs/sample2.png" alt="PHPRunnnnner logo" width="700" />
+</p>
+
+<p align="center">
+  <img src="imgs/sample3.png" alt="PHPRunnnnner logo" width="700" />
+</p>
+
+# PHPRunnnnner
 
 A Tinkerwell-inspired PHP code runner built with Electron + Vue 3. Run and inspect PHP code interactively against your local PHP installation or a full Laravel application — with a pretty-printed output panel, multi-tab editing, and persistent settings.
 

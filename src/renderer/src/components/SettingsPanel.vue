@@ -13,7 +13,7 @@
     <Transition name="panel">
       <div
         v-if="isSettingsOpen"
-        class="fixed right-0 top-0 h-full w-[380px] z-50 flex flex-col bg-surface border-l border-border shadow-2xl"
+        class="fixed right-0 top-0 h-full w-[500px] z-50 flex flex-col bg-surface border-l border-border shadow-2xl"
       >
         <!-- Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
@@ -82,11 +82,20 @@
                   placeholder="php"
                   spellcheck="false"
                 />
-                <button class="btn-secondary" :disabled="detecting" @click="handleDetect">
+                <button class="btn-secondary" :disabled="detecting || checking" @click="handleDetect">
                   {{ detecting ? 'Detecting…' : 'Detect' }}
                 </button>
+                <button class="btn-secondary" :disabled="checking || detecting" @click="handleCheck">
+                  {{ checking ? 'Checking…' : 'Check' }}
+                </button>
               </div>
-              <p v-if="phpVersion" class="mt-1.5 text-xs text-accent-green font-mono">
+              <p v-if="checkOk" class="mt-1.5 text-xs text-accent-green font-mono">
+                ✓ PHP {{ checkOk }} found
+              </p>
+              <p v-if="checkError" class="mt-1.5 text-xs text-accent-red font-mono">
+                {{ checkError }}
+              </p>
+              <p v-else-if="phpVersion && !checkOk" class="mt-1.5 text-xs text-accent-green font-mono">
                 PHP {{ phpVersion }}
               </p>
               <p v-if="detectError" class="mt-1.5 text-xs text-accent-red font-mono">
@@ -129,7 +138,7 @@
         <div class="px-6 py-4 border-t border-border shrink-0 flex flex-col gap-2">
           <p v-if="saveError" class="text-xs text-accent-red font-mono">{{ saveError }}</p>
           <div class="flex items-center justify-between">
-            <p class="text-xs text-white/20 font-mono">TinkerwellClone v0.1.0</p>
+            <p class="text-xs text-white/20 font-mono">PHPRunnnnner v0.1.0</p>
             <button class="save-btn" :disabled="saving" @click="handleSave">
               <template v-if="saved">
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -160,13 +169,22 @@ const { closeSettings } = store
 
 const detecting   = ref(false)
 const detectError = ref<string | null>(null)
+const checking    = ref(false)
+const checkOk     = ref<string | null>(null)
+const checkError  = ref<string | null>(null)
 const saving      = ref(false)
 const saved       = ref(false)
 const saveError   = ref<string | null>(null)
 
+function clearCheckState(): void {
+  checkOk.value    = null
+  checkError.value = null
+}
+
 async function handleDetect(): Promise<void> {
   detecting.value = true
   detectError.value = null
+  clearCheckState()
   const result = await window.electronAPI.php.detect()
   detecting.value = false
   if (result) {
@@ -174,6 +192,20 @@ async function handleDetect(): Promise<void> {
     phpVersion.value = result.version
   } else {
     detectError.value = 'No PHP binary found in PATH.'
+  }
+}
+
+async function handleCheck(): Promise<void> {
+  checking.value = true
+  clearCheckState()
+  const binary = settings.value.phpBinary.trim()
+  const result = await window.electronAPI.php.detect(binary || undefined)
+  checking.value = false
+  if (result) {
+    checkOk.value = result.version
+    phpVersion.value = result.version
+  } else {
+    checkError.value = `"${binary || 'php'}" not found or could not be executed.`
   }
 }
 
@@ -192,10 +224,11 @@ async function handleSave(): Promise<void> {
 }
 
 const shortcuts = [
-  { label: 'Run code',  keys: ['Ctrl', 'Enter'] },
-  { label: 'New tab',   keys: ['Ctrl', 'T'] },
-  { label: 'Close tab', keys: ['Ctrl', 'W'] },
-  { label: 'Settings',  keys: ['Ctrl', ','] },
+  { label: 'Run code',      keys: ['Ctrl', 'Enter'] },
+  { label: 'Save file',     keys: ['Ctrl', 'S'] },
+  { label: 'New tab',       keys: ['Ctrl', 'T'] },
+  { label: 'Close tab',     keys: ['Ctrl', 'W'] },
+  { label: 'Settings',      keys: ['Ctrl', ','] },
 ]
 </script>
 

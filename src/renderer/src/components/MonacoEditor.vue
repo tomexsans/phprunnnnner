@@ -32,6 +32,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'run': []
+  'save': []
 }>()
 
 const containerRef = ref<HTMLElement | null>(null)
@@ -111,6 +112,11 @@ onMounted(() => {
   editor.addCommand(
     monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
     () => emit('run')
+  )
+
+  editor.addCommand(
+    monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+    () => emit('save')
   )
 })
 

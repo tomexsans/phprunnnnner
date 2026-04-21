@@ -21,7 +21,7 @@ export interface LaravelValidateResult {
 export interface ElectronAPI {
   php: {
     run: (options: PhpRunOptions) => Promise<PhpRunResult>
-    detect: () => Promise<{ binary: string; version: string } | null>
+    detect: (binary?: string) => Promise<{ binary: string; version: string } | null>
   }
   laravel: {
     validate: (projectPath: string) => Promise<LaravelValidateResult>

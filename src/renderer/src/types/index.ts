@@ -68,6 +68,13 @@ export interface Connection {
   projectPath?: string
 }
 
+export interface SavedFile {
+  id: string
+  name: string
+  code: string
+  savedAt: string
+}
+
 export interface AppSettings {
   theme: 'dark' | 'light'
   fontSize: number

@@ -266,11 +266,11 @@ export function registerPhpRunnerHandlers(): void {
     return runScript(script, phpBinary, timeout)
   })
 
-  ipcMain.handle('php:detect', async (): Promise<{ binary: string; version: string } | null> => {
+  ipcMain.handle('php:detect', async (_event, binary?: string): Promise<{ binary: string; version: string } | null> => {
     try {
-      const binary  = detectPhpBinary()
-      const version = execSync(`${binary} -r "echo PHP_VERSION;"`, { encoding: 'utf-8' }).trim()
-      return { binary, version }
+      const resolved = binary || detectPhpBinary()
+      const version  = execSync(`${resolved} -r "echo PHP_VERSION;"`, { encoding: 'utf-8' }).trim()
+      return { binary: resolved, version }
     } catch { return null }
   })
 

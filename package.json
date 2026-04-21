@@ -1,7 +1,7 @@
 {
-  "name": "tinkerwell-clone",
+  "name": "PHPRunnnnner",
   "version": "0.1.0",
-  "description": "A Tinkerwell-inspired PHP code runner built with Electron + Vue 3",
+  "description": "PHPRunnnnner is a FREE Tinkerwell-inspired PHP code runner. It allows you to quickly execute PHP code snippets in a user-friendly interface, making it an essential tool for developers who want to test and debug their PHP code on the fly.",
   "type": "module",
   "main": "out/main/index.js",
   "scripts": {
@@ -18,7 +18,11 @@
     "electron",
     "vue"
   ],
-  "author": "",
+  "author": {
+    "name": "Tomexsans",
+    "email": "rhustumevaristo@gmail.com"
+  },
+  "homepage": "https://github.com/tomexsans/phprunnnnner",
   "license": "MIT",
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
@@ -51,8 +55,8 @@
     "vue-router": "^4.3.3"
   },
   "build": {
-    "appId": "com.tinkerwell-clone.app",
-    "productName": "TinkerwellClone",
+    "appId": "com.phprunnnnner-tinker.app",
+    "productName": "PHPRunnnnner",
     "directories": {
       "output": "out"
     },
@@ -62,17 +66,42 @@
       "out/renderer/**/*"
     ],
     "linux": {
+      "category": "Development",
+      "icon": "build/icons",
+      "maintainer": "Tomexsans <rhustumevaristo@gmail.com>",
+      "vendor": "Tomexsans",
+      "synopsis": "A Tinkerwell-inspired PHP code runner",
+      "description": "PHPRunnnnner is a FREE Tinkerwell-inspired PHP code runner. It allows you to quickly execute PHP code snippets in a user-friendly interface, making it an essential tool for developers who want to test and debug their PHP code on the fly.",
+      "desktop": {
+        "StartupNotify": "true"
+      },
       "target": [
         "AppImage",
         "deb"
       ]
     },
+    "deb": {
+      "priority": "optional",
+      "compression": "xz",
+      "depends": [],
+      "packageCategory": "devel",
+      "maintainer": "Tomexsans <rhustumevaristo@gmail.com>",
+      "afterInstall": null,
+      "afterRemove": null,
+      "fpm": [
+        "--license", "MIT",
+        "--vendor", "Tomexsans",
+        "--url", "https://github.com/tomexsans/phprunnnnner"
+      ]
+    },
     "mac": {
+      "icon": "build/icons/icon.icns",
       "target": [
         "dmg"
       ]
     },
     "win": {
+      "icon": "build/icons/icon.ico",
       "target": [
         "nsis"
       ]

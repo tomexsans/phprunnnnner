@@ -42,8 +42,21 @@
     </div>
 
     <!-- Spacer -->
-    <div class="ml-auto flex items-center gap-3">
+    <div class="ml-auto flex items-center gap-2">
       <span v-if="phpVersion" class="text-xs text-white/30 font-mono">PHP {{ phpVersion }}</span>
+
+      <!-- Saved files -->
+      <button
+        class="icon-btn"
+        title="Saved files"
+        @click="openSavedFiles"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="2" y="1" width="11" height="16" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M16 5v10a1.5 1.5 0 0 1-1.5 1.5H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M5 5.5h6M5 8.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
 
       <!-- Settings gear -->
       <button
@@ -51,14 +64,14 @@
         title="Settings (Ctrl+,)"
         @click="openSettings"
       >
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M7.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"
-            stroke="currentColor" stroke-width="1.2"
+            d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+            stroke="currentColor" stroke-width="1.4"
           />
           <path
-            d="M12.2 5.7c.1-.3.2-.7.2-1.1l-1.4-.8a5 5 0 0 0-.5-.9l.4-1.5A5.5 5.5 0 0 0 9 .7L7.8 1.5A5 5 0 0 0 7.5 1.5c-.1 0-.2 0-.3 0L6 .7a5.5 5.5 0 0 0-2 .7l.4 1.5c-.2.3-.4.6-.5.9L2.5 4.6a5.5 5.5 0 0 0 0 2.8l1.4.8c.1.3.3.6.5.9l-.4 1.5a5.5 5.5 0 0 0 2 .7l1.2-.8h.3c.1 0 .2 0 .3 0l1.2.8a5.5 5.5 0 0 0 2-.7l-.4-1.5c.2-.3.4-.6.5-.9l1.4-.8a5.5 5.5 0 0 0-.3-1.7Z"
-            stroke="currentColor" stroke-width="1.2"
+            d="M16.2 7.6a6.5 6.5 0 0 0 .3-1.5l-1.8-1a6 6 0 0 0-.7-1.2l.5-2A7 7 0 0 0 12 1l-1.6 1h-.8L8 1a7 7 0 0 0-2.5 1l.5 2a6 6 0 0 0-.7 1.2l-1.8 1a7 7 0 0 0 0 3.6l1.8 1c.2.4.4.8.7 1.2l-.5 2a7 7 0 0 0 2.5 1l1.6-1h.8l1.6 1a7 7 0 0 0 2.5-1l-.5-2c.3-.4.5-.8.7-1.2l1.8-1a7 7 0 0 0-.5-2.2Z"
+            stroke="currentColor" stroke-width="1.4"
           />
         </svg>
       </button>
@@ -76,6 +89,7 @@ const emit = defineEmits<{ run: [] }>()
 
 const editorStore = useEditorStore()
 const { isRunning } = storeToRefs(editorStore)
+const { openSavedFiles } = editorStore
 
 const settingsStore = useSettingsStore()
 const { connections, activeConnectionId, phpVersion } = storeToRefs(settingsStore)

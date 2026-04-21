@@ -1,12 +1,29 @@
 import { ipcMain } from 'electron'
 import Store from 'electron-store'
 
+export interface PersistedTab {
+  id: string
+  title: string
+  code: string
+}
+
+export interface SavedFile {
+  id: string
+  name: string
+  code: string
+  savedAt: string
+}
+
 interface StoreSchema {
   snippets: Snippet[]
   connections: Connection[]
   activeConnectionId: string
   settings: AppSettings
   recentFiles: string[]
+  tabs: PersistedTab[]
+  activeTabId: string
+  untitledCounter: number
+  savedFiles: SavedFile[]
 }
 
 export interface Snippet {
@@ -59,7 +76,11 @@ const store = new Store<StoreSchema>({
     ],
     activeConnectionId: 'local',
     settings: defaultSettings,
-    recentFiles: []
+    recentFiles: [],
+    tabs: [],
+    activeTabId: '',
+    untitledCounter: 2,
+    savedFiles: []
   }
 })
 

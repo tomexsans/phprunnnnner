@@ -4,6 +4,8 @@
     <TabBar />
     <Toolbar @run="handleRun" />
     <SettingsPanel />
+    <SavedFilesPanel />
+    <SaveNameDialog v-model="saveDialogOpen" @confirm="onSaveNameConfirmed" />
 
     <!-- Main workspace -->
     <div ref="workspaceRef" class="flex flex-1 overflow-hidden">
@@ -18,6 +20,7 @@
           :word-wrap="settings.wordWrap"
           @update:model-value="onCodeChange"
           @run="handleRun"
+          @save="handleSave"
         />
       </div>
 
@@ -40,7 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import SaveNameDialog from '@/components/SaveNameDialog.vue'
 import { storeToRefs } from 'pinia'
 import TitleBar from '@/components/TitleBar.vue'
 import TabBar from '@/components/TabBar.vue'
@@ -48,6 +52,7 @@ import Toolbar from '@/components/Toolbar.vue'
 import MonacoEditor from '@/components/MonacoEditor.vue'
 import OutputPanel from '@/components/OutputPanel.vue'
 import SettingsPanel from '@/components/SettingsPanel.vue'
+import SavedFilesPanel from '@/components/SavedFilesPanel.vue'
 import { useEditorStore } from '@/stores/editor'
 import { useSettingsStore } from '@/stores/settings'
 import { useSplitPane } from '@/composables/useSplitPane'
@@ -61,19 +66,40 @@ const { settings } = storeToRefs(settingsStore)
 const workspaceRef = ref<HTMLElement | null>(null)
 const { outputWidth, isDragging, onDragStart } = useSplitPane(workspaceRef)
 
+const saveDialogOpen = ref(false)
+
+function isUntitled(title: string): boolean {
+  return /^Untitled\s*\d*$/i.test(title.trim())
+}
+
 function onCodeChange(code: string): void {
   if (activeTab.value) {
     editorStore.updateTabCode(activeTab.value.id, code)
   }
 }
 
+async function handleSave(): Promise<void> {
+  if (!activeTab.value) return
+  if (isUntitled(activeTab.value.title)) {
+    saveDialogOpen.value = true
+  } else {
+    await editorStore.saveFile(activeTab.value.title)
+  }
+}
+
+async function onSaveNameConfirmed(name: string): Promise<void> {
+  if (!activeTab.value) return
+  editorStore.renameTab(activeTab.value.id, name)
+  await editorStore.saveFile(name)
+}
+
 async function handleRun(): Promise<void> {
   if (!activeTab.value || editorStore.isRunning) return
 
-  const code       = activeTab.value.code
-  const phpBinary  = settingsStore.settings.phpBinary
-  const timeout    = settingsStore.settings.executionTimeout * 1000
-  const connection = settingsStore.activeConnection()
+  const code        = activeTab.value.code
+  const connection  = settingsStore.activeConnection()
+  const phpBinary   = connection.phpBinary || settingsStore.settings.phpBinary
+  const timeout     = settingsStore.settings.executionTimeout * 1000
   const laravelPath = connection.type === 'laravel' ? connection.projectPath : undefined
 
   editorStore.setRunning(true)
@@ -94,9 +120,22 @@ async function handleRun(): Promise<void> {
   }
 }
 
+function onGlobalKeydown(e: KeyboardEvent): void {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault()
+    handleSave()
+  }
+}
+
 onMounted(async () => {
   await settingsStore.load()
   await settingsStore.detectPhp()
+  await editorStore.loadTabs()
+  window.addEventListener('keydown', onGlobalKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onGlobalKeydown)
 })
 </script>
 

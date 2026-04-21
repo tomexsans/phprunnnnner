@@ -6,7 +6,7 @@
     <!-- App identity -->
     <div class="flex items-center gap-2" style="-webkit-app-region: no-drag">
       <div class="w-4 h-4 rounded-full bg-accent-purple opacity-80" />
-      <span class="text-sm font-medium text-white/70">TinkerwellClone</span>
+      <span class="text-sm font-medium text-white/70">PHPRunnnnner</span>
     </div>
 
     <!-- PHP version badge -->

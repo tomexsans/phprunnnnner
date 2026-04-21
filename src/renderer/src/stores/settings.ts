@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { AppSettings, Connection } from '@/types'
 
 const defaults: AppSettings = {
@@ -57,14 +57,25 @@ export const useSettingsStore = defineStore('settings', () => {
     ])
   }
 
-  async function detectPhp(): Promise<void> {
-    const result = await window.electronAPI.php.detect()
-    if (!result) return
+  function effectiveBinary(): string {
+    const conn = activeConnection()
+    return conn.phpBinary || settings.value.phpBinary
+  }
+
+  async function detectPhp(binary?: string): Promise<void> {
+    const bin = binary ?? effectiveBinary()
+    const result = await window.electronAPI.php.detect(bin)
+    if (!result) {
+      phpVersion.value = null
+      return
+    }
     phpVersion.value = result.version
-    if (settings.value.phpBinary === defaults.phpBinary) {
+    if (!binary && settings.value.phpBinary === defaults.phpBinary) {
       settings.value.phpBinary = result.binary
     }
   }
+
+  watch(activeConnectionId, () => detectPhp())
 
   const activeConnection = () =>
     connections.value.find((c) => c.id === activeConnectionId.value) ?? connections.value[0]
