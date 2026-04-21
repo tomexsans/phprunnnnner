@@ -4,6 +4,18 @@ import { writeFileSync, unlinkSync, mkdtempSync, existsSync, readFileSync } from
 import { join } from 'path'
 import { tmpdir } from 'os'
 
+const IS_FLATPAK = existsSync('/.flatpak-info')
+
+function hostSpawn(bin: string, args: string[], options: object) {
+  if (IS_FLATPAK) return spawn('flatpak-spawn', ['--host', bin, ...args], options)
+  return spawn(bin, args, options)
+}
+
+function hostExecSync(cmd: string, options: object): string {
+  if (IS_FLATPAK) return execSync(`flatpak-spawn --host ${cmd}`, options as Parameters<typeof execSync>[1]) as unknown as string
+  return execSync(cmd, options as Parameters<typeof execSync>[1]) as unknown as string
+}
+
 export interface PhpRunOptions {
   code: string
   phpBinary?: string
@@ -195,7 +207,7 @@ function stripOpeningTag(code: string): string {
 function detectPhpBinary(): string {
   const candidates = ['php', 'php8.3', 'php8.2', 'php8.1', 'php8.0', 'php7.4']
   for (const bin of candidates) {
-    try { execSync(`which ${bin}`, { stdio: 'ignore' }); return bin } catch { /* try next */ }
+    try { hostExecSync(`which ${bin}`, { stdio: 'ignore' }); return bin } catch { /* try next */ }
   }
   return 'php'
 }
@@ -220,7 +232,7 @@ function runScript(
 
     let output = '', error = '', timedOut = false
 
-    const proc = spawn(phpBinary, [tmpFile], {
+    const proc = hostSpawn(phpBinary, [tmpFile], {
       env: { ...process.env, COLUMNS: '200' }
     })
 
@@ -269,7 +281,7 @@ export function registerPhpRunnerHandlers(): void {
   ipcMain.handle('php:detect', async (_event, binary?: string): Promise<{ binary: string; version: string } | null> => {
     try {
       const resolved = binary || detectPhpBinary()
-      const version  = execSync(`${resolved} -r "echo PHP_VERSION;"`, { encoding: 'utf-8' }).trim()
+      const version  = hostExecSync(`${resolved} -r "echo PHP_VERSION;"`, { encoding: 'utf-8' }).trim()
       return { binary: resolved, version }
     } catch { return null }
   })
