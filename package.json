@@ -65,6 +65,7 @@
       "out/preload/**/*",
       "out/renderer/**/*"
     ],
+    "executableName": "phprunnnnner",
     "linux": {
       "category": "Development",
       "icon": "build/icons",
