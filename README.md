@@ -145,9 +145,10 @@ Settings are stored at:
 
 | Platform | Path |
 |---|---|
-| Linux | `~/.config/tinkerwell-clone/config.json` |
-| macOS | `~/Library/Application Support/tinkerwell-clone/config.json` |
-| Windows | `%APPDATA%\tinkerwell-clone\config.json` |
+| Linux | `~/.config/PHPRunnnnner/config.json` |
+| macOS | `~/Library/Application Support/PHPRunnnnner/config.json` |
+| Windows | `%APPDATA%\PHPRunnnnner\config.json` |
+| Flatpak | `~/.var/app/io.github.tomexsans.PHPRunnnnner/config/PHPRunnnnner/config.json` │
 
 ---
 

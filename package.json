@@ -55,7 +55,7 @@
     "vue-router": "^4.3.3"
   },
   "build": {
-    "appId": "com.phprunnnnner-tinker.app",
+    "appId": "io.github.tomexsans.PHPRunnnnner",
     "productName": "PHPRunnnnner",
     "directories": {
       "output": "out"

@@ -59,7 +59,8 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId('com.tinkerwell-clone.app')
+  app.setName('PHPRunnnnner')
+  electronApp.setAppUserModelId('io.github.tomexsans.PHPRunnnnner')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
