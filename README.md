@@ -4,15 +4,19 @@
 
 
 <p align="center">
-  <img src="imgs/sample1.png" alt="PHPRunnnnner logo" width="700" />
+  <img src="imgs/sample1.png" alt="PHPRunnnnner logo"/>
 </p>
 
 <p align="center">
-  <img src="imgs/sample2.png" alt="PHPRunnnnner logo" width="700" />
+  <img src="imgs/sample2.png" alt="PHPRunnnnner logo" />
 </p>
 
 <p align="center">
-  <img src="imgs/sample3.png" alt="PHPRunnnnner logo" width="700" />
+  <img src="imgs/sample3.png" alt="PHPRunnnnner logo" />
+</p>
+
+<p align="center">
+  <img src="imgs/sample4.png" alt="PHPRunnnnner logo" />
 </p>
 
 # PHPRunnnnner
