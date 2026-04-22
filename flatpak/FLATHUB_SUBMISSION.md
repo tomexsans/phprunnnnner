@@ -13,7 +13,7 @@ Flatpak builds have no internet access, so all packages must be pre-declared.
 Run this from the project root (not inside flatpak/):
 ```bash
 pip install --upgrade flatpak-node-generator
-flatpak-node-generator npm package-lock.json -o flatpak/generated-sources.json
+rm -rf node_modules && flatpak-node-generator npm package-lock.json -o flatpak/generated-sources.json
 ```
 This must be re-run every time package-lock.json changes.
 

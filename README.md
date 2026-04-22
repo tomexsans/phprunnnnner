@@ -4,19 +4,19 @@
 
 
 <p align="center">
-  <img src="imgs/sample1.png" alt="PHPRunnnnner logo"/>
+  <img src="imgs/0_sample_laravel.png" alt="PHPRunnnnner logo"/>
 </p>
 
 <p align="center">
-  <img src="imgs/sample2.png" alt="PHPRunnnnner logo" />
+  <img src="imgs/0_sample_php_snippet.png" alt="PHPRunnnnner logo" />
 </p>
 
 <p align="center">
-  <img src="imgs/sample3.png" alt="PHPRunnnnner logo" />
+  <img src="imgs/0_sample_saved_pages_panel.png" alt="PHPRunnnnner logo" />
 </p>
 
 <p align="center">
-  <img src="imgs/sample4.png" alt="PHPRunnnnner logo" />
+  <img src="imgs/0_sample_settings_panel.png" alt="PHPRunnnnner logo" />
 </p>
 
 # PHPRunnnnner
@@ -148,7 +148,7 @@ Settings are stored at:
 | Linux | `~/.config/PHPRunnnnner/config.json` |
 | macOS | `~/Library/Application Support/PHPRunnnnner/config.json` |
 | Windows | `%APPDATA%\PHPRunnnnner\config.json` |
-| Flatpak | `~/.var/app/io.github.tomexsans.PHPRunnnnner/config/PHPRunnnnner/config.json` │
+| Flatpak | `~/.var/app/io.github.tomexsans.PHPRunnnnner/config/PHPRunnnnner/config.json` |
 
 ---
 
@@ -158,60 +158,6 @@ Settings are stored at:
 |---|---|
 | Run code | `Ctrl+Enter` |
 | Open settings | `Ctrl+,` |
-
----
-
-## Project Structure
-
-```
-src/
-├── main/
-│   ├── index.ts              # Electron main process, BrowserWindow
-│   └── ipc/
-│       ├── phpRunner.ts      # PHP execution + Laravel bootstrap + dump helpers
-│       ├── store.ts          # electron-store IPC handlers
-│       └── dialog.ts         # Native directory picker
-├── preload/
-│   └── index.ts              # contextBridge API (php, laravel, store, dialog, window)
-└── renderer/src/
-    ├── components/
-    │   ├── MonacoEditor.vue   # Editor with custom Catppuccin dark theme
-    │   ├── OutputPanel.vue    # Renders mixed text + dump segments
-    │   ├── DumpNode.vue       # Recursive typed value tree
-    │   ├── TruncationBanner.vue
-    │   ├── TabBar.vue
-    │   ├── Toolbar.vue
-    │   ├── TitleBar.vue       # Custom frameless title bar
-    │   ├── SettingsPanel.vue  # Slide-over settings panel
-    │   ├── ConnectionsSection.vue
-    │   └── CollapseIcon.vue
-    ├── composables/
-    │   ├── useSplitPane.ts    # Resizable pane drag logic
-    │   └── useOutputParser.ts # Splits stdout into text/dump segments
-    ├── stores/
-    │   ├── editor.ts          # Tabs, run state, last result
-    │   └── settings.ts        # Settings, connections, persistence
-    ├── types/
-    │   ├── index.ts           # Shared types (DumpValue, EditorTab, etc.)
-    │   └── electron.d.ts      # window.electronAPI type declarations
-    └── views/
-        └── MainView.vue       # Root layout
-```
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Desktop shell | Electron 31 |
-| Build toolchain | electron-vite 2 |
-| Frontend | Vue 3 + Composition API + TypeScript |
-| Editor | Monaco Editor 0.50 |
-| State management | Pinia |
-| Styling | Tailwind CSS v3 |
-| Persistence | electron-store 8 |
-| PHP execution | Node.js `child_process.spawn` |
 
 ---
 
