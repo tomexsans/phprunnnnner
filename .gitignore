@@ -63,6 +63,4 @@ coverage
 # Flatpak local/build artifacts
 flatpak/.flatpak-builder/
 flatpak/build-dir/
-
-generated-sources.json
 notes.txt
