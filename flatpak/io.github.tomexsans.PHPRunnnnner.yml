@@ -71,7 +71,7 @@ modules:
       - type: git
         url: https://github.com/tomexsans/phprunnnnner.git
         tag: v0.1.0
-        commit: 58c55e6ed0726110341307a25e52146c7139dc00
+        commit: 55eeb4adc154f3a802d06f42d63d6def8fe43589
         dest: main
 
       - type: script
