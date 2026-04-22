@@ -21,9 +21,9 @@ This must be re-run every time package-lock.json changes.
 ```bash
 sudo apt install flatpak flatpak-builder
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install flathub org.freedesktop.Platform//24.08 org.freedesktop.Sdk//24.08
-flatpak install flathub org.electronjs.Electron2.BaseApp//24.08
-flatpak install flathub org.freedesktop.Sdk.Extension.node20//24.08
+flatpak install flathub org.freedesktop.Platform//25.08 org.freedesktop.Sdk//25.08
+flatpak install flathub org.electronjs.Electron2.BaseApp//25.08
+flatpak install flathub org.freedesktop.Sdk.Extension.node20//25.08
 ```
 
 ### 4. Test the build locally

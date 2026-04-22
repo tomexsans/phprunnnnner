@@ -3,7 +3,7 @@ runtime: org.freedesktop.Platform
 runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 base: org.electronjs.Electron2.BaseApp
-base-version: '24.08'
+base-version: '25.08'
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.node20
 separate-locales: false
@@ -71,7 +71,7 @@ modules:
       - type: git
         url: https://github.com/tomexsans/phprunnnnner.git
         tag: v0.1.0
-        commit: 55eeb4adc154f3a802d06f42d63d6def8fe43589
+        commit: 4913ae783b9e6f0c23a61ce5d222a12a6a0ca162
         dest: main
 
       - type: script
