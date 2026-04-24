@@ -75,6 +75,19 @@
     <div class="ml-auto flex items-center gap-2">
       <span v-if="phpVersion" class="text-xs text-white/30 font-mono">PHP {{ phpVersion }}</span>
 
+      <!-- Terminal toggle -->
+      <button
+        class="icon-btn"
+        title="Toggle terminal (Ctrl+`)"
+        @click="emit('toggle-terminal')"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="2" y="3" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M5 7l3 2.5L5 12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 12h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+
       <!-- Saved files -->
       <button
         class="icon-btn"
@@ -115,7 +128,7 @@ import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import { useSettingsStore } from '@/stores/settings'
 
-const emit = defineEmits<{ run: [] }>()
+const emit = defineEmits<{ run: []; 'toggle-terminal': [] }>()
 
 const editorStore = useEditorStore()
 const { isRunning, activeTab } = storeToRefs(editorStore)

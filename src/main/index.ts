@@ -5,6 +5,7 @@ import { registerPhpRunnerHandlers } from './ipc/phpRunner'
 import { registerStoreHandlers } from './ipc/store'
 import { registerDialogHandlers } from './ipc/dialog'
 import { registerSnippetFileHandlers } from './ipc/snippetFiles'
+import { registerTerminalHandlers } from './ipc/terminal'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -72,6 +73,7 @@ app.whenReady().then(() => {
   registerStoreHandlers()
   registerDialogHandlers()
   registerSnippetFileHandlers()
+  registerTerminalHandlers()
 
   createWindow()
 

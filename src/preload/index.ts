@@ -18,6 +18,18 @@ const api = {
     set: (key: string, value: unknown) => ipcRenderer.invoke('store:set', key, value),
     getAll: () => ipcRenderer.invoke('store:getAll')
   },
+  terminal: {
+    create:  (cols: number, rows: number) => ipcRenderer.invoke('terminal:create', cols, rows),
+    input:   (data: string)               => ipcRenderer.send('terminal:input', data),
+    resize:  (cols: number, rows: number) => ipcRenderer.invoke('terminal:resize', cols, rows),
+    destroy: ()                           => ipcRenderer.send('terminal:destroy'),
+    onData:  (cb: (data: string) => void) => ipcRenderer.on('terminal:data', (_e, data) => cb(data)),
+    onExit:  (cb: () => void)             => ipcRenderer.on('terminal:exit', () => cb()),
+    offAll:  ()                           => {
+      ipcRenderer.removeAllListeners('terminal:data')
+      ipcRenderer.removeAllListeners('terminal:exit')
+    }
+  },
   files: {
     writeSnippet: (id: string, code: string) => ipcRenderer.invoke('files:writeSnippet', id, code),
     writeTab:     (id: string, code: string) => ipcRenderer.invoke('files:writeTab', id, code),
