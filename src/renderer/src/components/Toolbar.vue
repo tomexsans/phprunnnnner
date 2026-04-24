@@ -101,6 +101,19 @@
         </svg>
       </button>
 
+      <!-- About -->
+      <button
+        class="icon-btn"
+        title="About PHPRunnnnner"
+        @click="emit('toggle-about')"
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M9 8v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="9" cy="5.5" r="0.75" fill="currentColor"/>
+        </svg>
+      </button>
+
       <!-- Settings gear -->
       <button
         class="icon-btn"
@@ -128,7 +141,7 @@ import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import { useSettingsStore } from '@/stores/settings'
 
-const emit = defineEmits<{ run: []; 'toggle-terminal': [] }>()
+const emit = defineEmits<{ run: []; 'toggle-terminal': []; 'toggle-about': [] }>()
 
 const editorStore = useEditorStore()
 const { isRunning, activeTab } = storeToRefs(editorStore)

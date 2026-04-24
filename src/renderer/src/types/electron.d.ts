@@ -30,6 +30,9 @@ export interface ElectronAPI {
     openDirectory: () => Promise<string | null>
     confirm: (message: string, detail: string) => Promise<boolean>
   }
+  app: {
+    logoDataUrl: () => Promise<string | null>
+  }
   store: {
     get: (key: string) => Promise<unknown>
     set: (key: string, value: unknown) => Promise<boolean>

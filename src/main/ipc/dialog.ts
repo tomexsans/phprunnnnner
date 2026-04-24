@@ -1,4 +1,6 @@
-import { ipcMain, dialog, BrowserWindow } from 'electron'
+import { ipcMain, dialog, BrowserWindow, app } from 'electron'
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
 
 export function registerDialogHandlers(): void {
   ipcMain.handle('dialog:openDirectory', async (): Promise<string | null> => {
@@ -21,5 +23,12 @@ export function registerDialogHandlers(): void {
       detail
     })
     return response === 1
+  })
+
+  ipcMain.handle('app:logoDataUrl', (): string | null => {
+    const logoPath = join(app.getAppPath(), 'logo.png')
+    if (!existsSync(logoPath)) return null
+    const data = readFileSync(logoPath)
+    return `data:image/png;base64,${data.toString('base64')}`
   })
 }

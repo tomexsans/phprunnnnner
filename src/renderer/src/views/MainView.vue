@@ -2,10 +2,11 @@
   <div class="flex flex-col h-screen bg-surface text-white overflow-hidden">
     <TitleBar />
     <TabBar />
-    <Toolbar @run="handleRun" @toggle-terminal="toggleTerminal" />
+    <Toolbar @run="handleRun" @toggle-terminal="toggleTerminal" @toggle-about="isAboutOpen = !isAboutOpen" />
     <SettingsPanel />
     <SavedFilesPanel />
     <SaveNameDialog v-model="saveDialogOpen" @confirm="onSaveNameConfirmed" />
+    <AboutDialog v-model="isAboutOpen" />
 
     <!-- Content area: editor+output stacked above terminal -->
     <div class="flex flex-col flex-1 overflow-hidden">
@@ -92,6 +93,7 @@ import OutputPanel from '@/components/OutputPanel.vue'
 import SettingsPanel from '@/components/SettingsPanel.vue'
 import SavedFilesPanel from '@/components/SavedFilesPanel.vue'
 import TerminalPanel from '@/components/TerminalPanel.vue'
+import AboutDialog from '@/components/AboutDialog.vue'
 import { useEditorStore } from '@/stores/editor'
 import { useSettingsStore } from '@/stores/settings'
 import { useSplitPane } from '@/composables/useSplitPane'
@@ -140,6 +142,7 @@ const workspaceRef = ref<HTMLElement | null>(null)
 const { outputWidth, isDragging, onDragStart } = useSplitPane(workspaceRef)
 
 const saveDialogOpen = ref(false)
+const isAboutOpen    = ref(false)
 
 function isUntitled(title: string): boolean {
   return /^Untitled\s*\d*$/i.test(title.trim())

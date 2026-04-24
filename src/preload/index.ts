@@ -13,6 +13,9 @@ const api = {
     openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
     confirm: (message: string, detail: string) => ipcRenderer.invoke('dialog:confirm', message, detail)
   },
+  app: {
+    logoDataUrl: () => ipcRenderer.invoke('app:logoDataUrl')
+  },
   store: {
     get: (key: string) => ipcRenderer.invoke('store:get', key),
     set: (key: string, value: unknown) => ipcRenderer.invoke('store:set', key, value),
