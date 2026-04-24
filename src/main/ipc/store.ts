@@ -5,6 +5,8 @@ export interface PersistedTab {
   id: string
   title: string
   filePath: string
+  connectionId?: string
+  phpBinary?: string
 }
 
 export interface SavedFile {

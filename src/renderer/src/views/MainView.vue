@@ -61,6 +61,7 @@ const editorStore = useEditorStore()
 const { activeTab } = storeToRefs(editorStore)
 
 const settingsStore = useSettingsStore()
+const { connections, activeConnectionId } = storeToRefs(settingsStore)
 const { settings } = storeToRefs(settingsStore)
 
 const workspaceRef = ref<HTMLElement | null>(null)
@@ -96,9 +97,15 @@ async function onSaveNameConfirmed(name: string): Promise<void> {
 async function handleRun(): Promise<void> {
   if (!activeTab.value || editorStore.isRunning) return
 
-  const code        = activeTab.value.code
-  const connection  = settingsStore.activeConnection()
-  const phpBinary   = connection.phpBinary || settingsStore.settings.phpBinary
+  const tab  = activeTab.value
+  const code = tab.code
+
+  // Resolve connection: tab override → global active → first connection
+  const connId     = tab.connectionId ?? activeConnectionId.value
+  const connection = connections.value.find((c) => c.id === connId) ?? settingsStore.activeConnection()
+
+  // Resolve binary: tab override → connection binary → global default
+  const phpBinary   = tab.phpBinary || connection.phpBinary || settingsStore.settings.phpBinary
   const timeout     = settingsStore.settings.executionTimeout * 1000
   const laravelPath = connection.type === 'laravel' ? connection.projectPath : undefined
 

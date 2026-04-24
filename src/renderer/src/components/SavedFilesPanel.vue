@@ -84,7 +84,17 @@
             <template v-else>
               <div class="flex-1 min-w-0">
                 <p class="text-sm text-white/80 truncate">{{ file.name }}</p>
-                <p class="text-xs text-white/30 mt-0.5">{{ formatDate(file.savedAt) }}</p>
+                <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                  <span class="text-xs text-white/30">{{ formatDate(file.savedAt) }}</span>
+                  <span class="meta-dot">·</span>
+                  <span
+                    class="meta-badge"
+                    :class="connectionType(file) === 'laravel' ? 'badge-laravel' : 'badge-local'"
+                  >{{ connectionLabel(file) }}</span>
+                  <span v-if="runtimeLabel(file)" class="meta-badge badge-runtime">
+                    {{ runtimeLabel(file) }}
+                  </span>
+                </div>
               </div>
               <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
@@ -132,11 +142,31 @@
 import { ref, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
+import { useSettingsStore } from '@/stores/settings'
 import type { SavedFile } from '@/types'
 
 const store = useEditorStore()
 const { savedFiles, isSavedFilesOpen, activeTab } = storeToRefs(store)
 const { closeSavedFiles, saveFile, renameFile, deleteSavedFile, openSavedFile } = store
+
+const settingsStore = useSettingsStore()
+const { connections, runtimes } = storeToRefs(settingsStore)
+
+function connectionLabel(file: SavedFile): string {
+  const conn = connections.value.find((c) => c.id === (file.connectionId ?? 'local'))
+  return conn?.name ?? 'Local PHP'
+}
+
+function connectionType(file: SavedFile): 'laravel' | 'local' {
+  const conn = connections.value.find((c) => c.id === (file.connectionId ?? 'local'))
+  return conn?.type === 'laravel' ? 'laravel' : 'local'
+}
+
+function runtimeLabel(file: SavedFile): string | null {
+  if (!file.phpBinary) return null
+  const rt = runtimes.value.find((r) => r.binary === file.phpBinary)
+  return rt?.name ?? file.phpBinary
+}
 
 const saveName = ref('')
 const saving = ref(false)
@@ -201,6 +231,14 @@ function formatDate(iso: string): string {
   @apply flex items-center gap-3 px-6 py-3 border-b border-border/50
          hover:bg-surface-50 transition-colors cursor-default;
 }
+
+.meta-dot  { @apply text-white/20 text-xs; }
+.meta-badge {
+  @apply text-[10px] px-1.5 py-px rounded font-mono uppercase tracking-wide leading-tight;
+}
+.badge-local   { @apply bg-accent-green/10 text-accent-green/70; }
+.badge-laravel { @apply bg-accent-red/10 text-accent-red/70; }
+.badge-runtime { @apply bg-accent-blue/10 text-accent-blue/70; }
 
 .action-btn {
   @apply w-7 h-7 flex items-center justify-center rounded hover:bg-surface-200 transition-colors;

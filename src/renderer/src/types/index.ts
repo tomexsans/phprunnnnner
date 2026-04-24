@@ -39,6 +39,8 @@ export interface EditorTab {
   code: string
   isDirty: boolean
   filePath?: string
+  connectionId?: string
+  phpBinary?: string
 }
 
 export interface PhpRunResult {
@@ -79,6 +81,8 @@ export interface SavedFile {
   name: string
   filePath: string
   savedAt: string
+  connectionId?: string
+  phpBinary?: string
 }
 
 export interface AppSettings {

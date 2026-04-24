@@ -23,12 +23,16 @@
 
     <div class="w-px h-5 bg-border" />
 
-    <!-- Connection selector -->
+    <!-- Connection selector (per-tab) -->
     <div class="flex items-center gap-2">
-      <div class="w-2 h-2 rounded-full bg-accent-green" />
+      <div
+        class="w-2 h-2 rounded-full transition-colors"
+        :class="activeTabConnection?.type === 'laravel' ? 'bg-accent-red' : 'bg-accent-green'"
+      />
       <select
-        v-model="activeConnectionId"
-        class="bg-transparent text-sm text-white/70 border-none outline-none cursor-pointer"
+        :value="tabConnectionId"
+        class="selector"
+        @change="setTabConnection(($event.target as HTMLSelectElement).value)"
       >
         <option
           v-for="conn in connections"
@@ -40,6 +44,32 @@
         </option>
       </select>
     </div>
+
+    <!-- Runtime selector (per-tab, shown only when runtimes exist) -->
+    <template v-if="runtimes.length > 0">
+      <div class="w-px h-5 bg-border" />
+      <div class="flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="text-white/30 shrink-0">
+          <rect x="1" y="2" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M3.5 5.5L5.5 7.5L8.5 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <select
+          :value="tabPhpBinary"
+          class="selector"
+          @change="setTabRuntime(($event.target as HTMLSelectElement).value)"
+        >
+          <option value="" class="bg-surface-50">Default</option>
+          <option
+            v-for="rt in runtimes"
+            :key="rt.id"
+            :value="rt.binary"
+            class="bg-surface-50"
+          >
+            {{ rt.name }}
+          </option>
+        </select>
+      </div>
+    </template>
 
     <!-- Spacer -->
     <div class="ml-auto flex items-center gap-2">
@@ -80,20 +110,46 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount } from 'vue'
+import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useEditorStore } from '@/stores/editor'
 import { useSettingsStore } from '@/stores/settings'
-import { storeToRefs } from 'pinia'
 
 const emit = defineEmits<{ run: [] }>()
 
 const editorStore = useEditorStore()
-const { isRunning } = storeToRefs(editorStore)
+const { isRunning, activeTab } = storeToRefs(editorStore)
 const { openSavedFiles } = editorStore
 
 const settingsStore = useSettingsStore()
-const { connections, activeConnectionId, phpVersion } = storeToRefs(settingsStore)
+const { connections, activeConnectionId, phpVersion, runtimes } = storeToRefs(settingsStore)
 const { openSettings } = settingsStore
+
+// ── Per-tab connection ─────────────────────────────────────────────────────
+
+const tabConnectionId = computed(() =>
+  activeTab.value?.connectionId ?? activeConnectionId.value
+)
+
+const activeTabConnection = computed(() =>
+  connections.value.find((c) => c.id === tabConnectionId.value)
+)
+
+function setTabConnection(id: string): void {
+  if (activeTab.value) activeTab.value.connectionId = id
+  // Keep global in sync so newly opened tabs inherit this choice
+  activeConnectionId.value = id
+}
+
+// ── Per-tab runtime ────────────────────────────────────────────────────────
+
+const tabPhpBinary = computed(() => activeTab.value?.phpBinary ?? '')
+
+function setTabRuntime(binary: string): void {
+  if (activeTab.value) activeTab.value.phpBinary = binary || undefined
+}
+
+// ── Run / keyboard ─────────────────────────────────────────────────────────
 
 function run(): void {
   emit('run')
@@ -116,6 +172,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
          bg-accent-purple text-surface transition-all
          hover:bg-accent-purple/80 active:scale-95
          disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100;
+}
+
+.selector {
+  @apply bg-transparent text-sm text-white/70 border-none outline-none cursor-pointer
+         hover:text-white/90 transition-colors;
 }
 
 .icon-btn {

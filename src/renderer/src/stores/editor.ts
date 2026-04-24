@@ -88,9 +88,9 @@ export const useEditorStore = defineStore('editor', () => {
 
   async function saveTabs(): Promise<void> {
     const persisted = await Promise.all(
-      tabs.value.map(async ({ id, title, code }) => {
+      tabs.value.map(async ({ id, title, code, connectionId, phpBinary }) => {
         const filePath = await window.electronAPI.files.writeTab(id, code)
-        return { id, title, filePath }
+        return { id, title, filePath, connectionId, phpBinary }
       })
     )
     await window.electronAPI.store.set('tabs', persisted)
@@ -103,16 +103,20 @@ export const useEditorStore = defineStore('editor', () => {
 
   async function saveFile(name: string): Promise<void> {
     if (!activeTab.value) return
-    const cleanName = name.trim() || activeTab.value.title
-    const code = activeTab.value.code
+    const cleanName    = name.trim() || activeTab.value.title
+    const code         = activeTab.value.code
+    const connectionId = activeTab.value.connectionId
+    const phpBinary    = activeTab.value.phpBinary
     const existing = savedFiles.value.find((f) => f.name === cleanName)
     if (existing) {
       await window.electronAPI.files.writeSnippet(existing.id, code)
-      existing.savedAt = new Date().toISOString()
+      existing.savedAt     = new Date().toISOString()
+      existing.connectionId = connectionId
+      existing.phpBinary    = phpBinary
     } else {
       const id = uuidv4()
       const filePath = await window.electronAPI.files.writeSnippet(id, code)
-      savedFiles.value.unshift({ id, name: cleanName, filePath, savedAt: new Date().toISOString() })
+      savedFiles.value.unshift({ id, name: cleanName, filePath, savedAt: new Date().toISOString(), connectionId, phpBinary })
     }
     activeTab.value.isDirty = false
     await window.electronAPI.store.set('savedFiles', JSON.parse(JSON.stringify(savedFiles.value)))
@@ -136,10 +140,12 @@ export const useEditorStore = defineStore('editor', () => {
   async function openSavedFile(file: SavedFile): Promise<void> {
     const code = await window.electronAPI.files.read(file.filePath)
     const tab: EditorTab = {
-      id: uuidv4(),
-      title: file.name,
+      id:           uuidv4(),
+      title:        file.name,
       code,
-      isDirty: false
+      isDirty:      false,
+      connectionId: file.connectionId,
+      phpBinary:    file.phpBinary
     }
     tabs.value.push(tab)
     activeTabId.value = tab.id
@@ -147,7 +153,7 @@ export const useEditorStore = defineStore('editor', () => {
 
   async function loadTabs(): Promise<void> {
     // RawTab covers both the new format (filePath) and the old format (code) for migration
-    type RawTab = { id: string; title: string; filePath?: string; code?: string }
+    type RawTab = { id: string; title: string; filePath?: string; code?: string; connectionId?: string; phpBinary?: string }
     const saved      = await window.electronAPI.store.get('tabs')        as RawTab[] | undefined
     const savedActiveId = await window.electronAPI.store.get('activeTabId')  as string | undefined
     const savedCounter  = await window.electronAPI.store.get('untitledCounter') as number | undefined
@@ -162,7 +168,7 @@ export const useEditorStore = defineStore('editor', () => {
             // Migration: old format stored code inline in the JSON
             code = t.code
           }
-          return { id: t.id, title: t.title, code, isDirty: false }
+          return { id: t.id, title: t.title, code, isDirty: false, connectionId: t.connectionId, phpBinary: t.phpBinary }
         })
       )
       tabs.value = loaded
