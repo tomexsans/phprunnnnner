@@ -94,11 +94,21 @@ async function onSaveNameConfirmed(name: string): Promise<void> {
   await editorStore.saveFile(name)
 }
 
+const SHELL_RE = /\b(exec|shell_exec|system|passthru|popen|proc_open|pcntl_exec)\s*\(|`/
+
 async function handleRun(): Promise<void> {
   if (!activeTab.value || editorStore.isRunning) return
 
   const tab  = activeTab.value
   const code = tab.code
+
+  if (SHELL_RE.test(code)) {
+    const ok = await window.electronAPI.dialog.confirm(
+      'This code contains shell execution functions.',
+      'exec(), shell_exec(), system(), passthru(), popen(), proc_open(), pcntl_exec(), or backtick operators can run arbitrary system commands with your user permissions.\n\nContinue?'
+    )
+    if (!ok) return
+  }
 
   // Resolve connection: tab override → global active → first connection
   const connId     = tab.connectionId ?? activeConnectionId.value

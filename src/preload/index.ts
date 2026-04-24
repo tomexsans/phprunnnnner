@@ -10,7 +10,8 @@ const api = {
     validate: (projectPath: string) => ipcRenderer.invoke('laravel:validate', projectPath)
   },
   dialog: {
-    openDirectory: () => ipcRenderer.invoke('dialog:openDirectory')
+    openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
+    confirm: (message: string, detail: string) => ipcRenderer.invoke('dialog:confirm', message, detail)
   },
   store: {
     get: (key: string) => ipcRenderer.invoke('store:get', key),

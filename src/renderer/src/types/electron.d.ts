@@ -28,6 +28,7 @@ export interface ElectronAPI {
   }
   dialog: {
     openDirectory: () => Promise<string | null>
+    confirm: (message: string, detail: string) => Promise<boolean>
   }
   store: {
     get: (key: string) => Promise<unknown>
