@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
-import type { AppSettings, Connection } from '@/types'
+import { v4 as uuidv4 } from 'uuid'
+import type { AppSettings, Connection, PhpRuntime } from '@/types'
 
 const defaults: AppSettings = {
   theme: 'dark',
@@ -17,15 +18,17 @@ export const useSettingsStore = defineStore('settings', () => {
   const activeConnectionId = ref<string>('local')
   const phpVersion         = ref<string | null>(null)
   const isSettingsOpen     = ref(false)
+  const runtimes           = ref<PhpRuntime[]>([])
 
   function openSettings():  void { isSettingsOpen.value = true  }
   function closeSettings(): void { isSettingsOpen.value = false }
 
   async function load(): Promise<void> {
-    const [storedSettings, storedConnections, storedConnectionId] = await Promise.all([
+    const [storedSettings, storedConnections, storedConnectionId, storedRuntimes] = await Promise.all([
       window.electronAPI.store.get('settings')           as Promise<AppSettings>,
       window.electronAPI.store.get('connections')        as Promise<Connection[]>,
-      window.electronAPI.store.get('activeConnectionId') as Promise<string>
+      window.electronAPI.store.get('activeConnectionId') as Promise<string>,
+      window.electronAPI.store.get('runtimes')           as Promise<PhpRuntime[]>
     ])
 
     if (storedSettings) {
@@ -43,18 +46,37 @@ export const useSettingsStore = defineStore('settings', () => {
       const exists = connections.value.some((c) => c.id === storedConnectionId)
       activeConnectionId.value = exists ? storedConnectionId : 'local'
     }
+
+    if (storedRuntimes?.length) {
+      runtimes.value = storedRuntimes
+    }
   }
 
   async function save(): Promise<void> {
     // JSON round-trip strips Vue's reactive Proxy so contextBridge structured-clone works correctly
     const plainSettings    = JSON.parse(JSON.stringify(settings.value))
     const plainConnections = JSON.parse(JSON.stringify(connections.value))
+    const plainRuntimes    = JSON.parse(JSON.stringify(runtimes.value))
 
     await Promise.all([
       window.electronAPI.store.set('settings',           plainSettings),
       window.electronAPI.store.set('connections',        plainConnections),
-      window.electronAPI.store.set('activeConnectionId', activeConnectionId.value)
+      window.electronAPI.store.set('activeConnectionId', activeConnectionId.value),
+      window.electronAPI.store.set('runtimes',           plainRuntimes)
     ])
+  }
+
+  function addRuntime(binary: string, version: string): void {
+    if (runtimes.value.some((r) => r.binary === binary)) return
+    runtimes.value.push({ id: uuidv4(), name: `PHP ${version}`, binary })
+  }
+
+  function removeRuntime(id: string): void {
+    runtimes.value = runtimes.value.filter((r) => r.id !== id)
+  }
+
+  function activateRuntime(runtime: PhpRuntime): void {
+    settings.value.phpBinary = runtime.binary
   }
 
   function effectiveBinary(): string {
@@ -86,11 +108,15 @@ export const useSettingsStore = defineStore('settings', () => {
     activeConnectionId,
     phpVersion,
     isSettingsOpen,
+    runtimes,
     openSettings,
     closeSettings,
     activeConnection,
     load,
     save,
-    detectPhp
+    detectPhp,
+    addRuntime,
+    removeRuntime,
+    activateRuntime
   }
 })

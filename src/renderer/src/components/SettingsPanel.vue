@@ -89,18 +89,21 @@
                   {{ checking ? 'Checking…' : 'Check' }}
                 </button>
               </div>
-              <p v-if="checkOk" class="mt-1.5 text-xs text-accent-green font-mono">
-                ✓ PHP {{ checkOk }} found
-              </p>
+              <div v-if="checkOk" class="mt-1.5 flex items-center gap-2">
+                <p class="text-xs text-accent-green font-mono">✓ PHP {{ checkOk }} found</p>
+                <button v-if="canSaveRuntime" class="save-runtime-btn" @click="handleSaveRuntime">+ Save</button>
+              </div>
               <p v-if="checkError" class="mt-1.5 text-xs text-accent-red font-mono">
                 {{ checkError }}
               </p>
-              <p v-else-if="phpVersion && !checkOk" class="mt-1.5 text-xs text-accent-green font-mono">
-                PHP {{ phpVersion }}
-              </p>
+              <div v-if="phpVersion && !checkOk" class="mt-1.5 flex items-center gap-2">
+                <p class="text-xs text-accent-green font-mono">PHP {{ phpVersion }}</p>
+                <button v-if="canSaveRuntime" class="save-runtime-btn" @click="handleSaveRuntime">+ Save</button>
+              </div>
               <p v-if="detectError" class="mt-1.5 text-xs text-accent-red font-mono">
                 {{ detectError }}
               </p>
+              <RuntimesSection />
             </div>
 
             <div class="setting-row mt-4">
@@ -158,27 +161,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSettingsStore } from '@/stores/settings'
 import ConnectionsSection from './ConnectionsSection.vue'
+import RuntimesSection from './RuntimesSection.vue'
 
 const store = useSettingsStore()
-const { settings, phpVersion, isSettingsOpen } = storeToRefs(store)
+const { settings, phpVersion, isSettingsOpen, runtimes } = storeToRefs(store)
 const { closeSettings } = store
 
-const detecting   = ref(false)
-const detectError = ref<string | null>(null)
-const checking    = ref(false)
-const checkOk     = ref<string | null>(null)
-const checkError  = ref<string | null>(null)
-const saving      = ref(false)
-const saved       = ref(false)
-const saveError   = ref<string | null>(null)
+const detecting      = ref(false)
+const detectError    = ref<string | null>(null)
+const checking       = ref(false)
+const checkOk        = ref<string | null>(null)
+const checkError     = ref<string | null>(null)
+const lastSavedBin   = ref<string | null>(null)   // binary that triggered the current checkOk/detect result
+const saving         = ref(false)
+const saved          = ref(false)
+const saveError      = ref<string | null>(null)
+
+const canSaveRuntime = computed(() =>
+  lastSavedBin.value !== null &&
+  !runtimes.value.some((r) => r.binary === lastSavedBin.value)
+)
 
 function clearCheckState(): void {
   checkOk.value    = null
   checkError.value = null
+  lastSavedBin.value = null
 }
 
 async function handleDetect(): Promise<void> {
@@ -190,6 +201,7 @@ async function handleDetect(): Promise<void> {
   if (result) {
     settings.value.phpBinary = result.binary
     phpVersion.value = result.version
+    lastSavedBin.value = result.binary
   } else {
     detectError.value = 'No PHP binary found in PATH.'
   }
@@ -204,9 +216,17 @@ async function handleCheck(): Promise<void> {
   if (result) {
     checkOk.value = result.version
     phpVersion.value = result.version
+    lastSavedBin.value = result.binary
   } else {
     checkError.value = `"${binary || 'php'}" not found or could not be executed.`
   }
+}
+
+function handleSaveRuntime(): void {
+  if (!lastSavedBin.value || !checkOk.value && !phpVersion.value) return
+  const version = checkOk.value ?? phpVersion.value ?? ''
+  store.addRuntime(lastSavedBin.value, version)
+  lastSavedBin.value = null   // hide the button once saved
 }
 
 async function handleSave(): Promise<void> {
@@ -271,6 +291,11 @@ const shortcuts = [
 }
 
 .kbd { @apply text-xs bg-surface-50 border border-border px-1.5 py-0.5 rounded font-mono text-white/50; }
+
+.save-runtime-btn {
+  @apply text-xs px-2 py-0.5 rounded border border-accent-green/30 text-accent-green/70
+         hover:text-accent-green hover:border-accent-green/60 transition-colors font-mono;
+}
 
 .panel-enter-active, .panel-leave-active { transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1); }
 .panel-enter-from, .panel-leave-to { transform: translateX(100%); }

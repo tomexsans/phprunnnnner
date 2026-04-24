@@ -68,6 +68,12 @@ export interface Connection {
   projectPath?: string
 }
 
+export interface PhpRuntime {
+  id: string
+  name: string
+  binary: string
+}
+
 export interface SavedFile {
   id: string
   name: string

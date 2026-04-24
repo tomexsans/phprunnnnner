@@ -14,6 +14,12 @@ export interface SavedFile {
   savedAt: string
 }
 
+export interface PhpRuntime {
+  id: string
+  name: string
+  binary: string
+}
+
 interface StoreSchema {
   snippets: Snippet[]
   connections: Connection[]
@@ -24,6 +30,7 @@ interface StoreSchema {
   activeTabId: string
   untitledCounter: number
   savedFiles: SavedFile[]
+  runtimes: PhpRuntime[]
 }
 
 export interface Snippet {
@@ -80,7 +87,8 @@ const store = new Store<StoreSchema>({
     tabs: [],
     activeTabId: '',
     untitledCounter: 2,
-    savedFiles: []
+    savedFiles: [],
+    runtimes: []
   }
 })
 
