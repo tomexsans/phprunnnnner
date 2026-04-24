@@ -17,6 +17,13 @@ const api = {
     set: (key: string, value: unknown) => ipcRenderer.invoke('store:set', key, value),
     getAll: () => ipcRenderer.invoke('store:getAll')
   },
+  files: {
+    writeSnippet: (id: string, code: string) => ipcRenderer.invoke('files:writeSnippet', id, code),
+    writeTab:     (id: string, code: string) => ipcRenderer.invoke('files:writeTab', id, code),
+    read:         (filePath: string)         => ipcRenderer.invoke('files:read', filePath),
+    delete:       (filePath: string)         => ipcRenderer.invoke('files:delete', filePath),
+    deleteTab:    (id: string)               => ipcRenderer.invoke('files:deleteTab', id),
+  },
   window: {
     minimize: () => ipcRenderer.send('window:minimize'),
     maximize: () => ipcRenderer.send('window:maximize'),

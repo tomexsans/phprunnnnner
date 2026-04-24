@@ -71,7 +71,7 @@ export interface Connection {
 export interface SavedFile {
   id: string
   name: string
-  code: string
+  filePath: string
   savedAt: string
 }
 

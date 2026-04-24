@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { registerPhpRunnerHandlers } from './ipc/phpRunner'
 import { registerStoreHandlers } from './ipc/store'
 import { registerDialogHandlers } from './ipc/dialog'
+import { registerSnippetFileHandlers } from './ipc/snippetFiles'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -70,6 +71,7 @@ app.whenReady().then(() => {
   registerPhpRunnerHandlers()
   registerStoreHandlers()
   registerDialogHandlers()
+  registerSnippetFileHandlers()
 
   createWindow()
 

@@ -4,13 +4,13 @@ import Store from 'electron-store'
 export interface PersistedTab {
   id: string
   title: string
-  code: string
+  filePath: string
 }
 
 export interface SavedFile {
   id: string
   name: string
-  code: string
+  filePath: string
   savedAt: string
 }
 

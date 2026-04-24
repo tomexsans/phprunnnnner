@@ -34,6 +34,13 @@ export interface ElectronAPI {
     set: (key: string, value: unknown) => Promise<boolean>
     getAll: () => Promise<unknown>
   }
+  files: {
+    writeSnippet: (id: string, code: string) => Promise<string>
+    writeTab:     (id: string, code: string) => Promise<string>
+    read:         (filePath: string)         => Promise<string>
+    delete:       (filePath: string)         => Promise<void>
+    deleteTab:    (id: string)               => Promise<void>
+  }
   window: {
     minimize: () => void
     maximize: () => void

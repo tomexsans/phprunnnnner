@@ -157,8 +157,8 @@ async function handleDelete(id: string): Promise<void> {
   await deleteSavedFile(id)
 }
 
-function handleOpen(file: SavedFile): void {
-  openSavedFile(file)
+async function handleOpen(file: SavedFile): Promise<void> {
+  await openSavedFile(file)
   closeSavedFiles()
 }
 
