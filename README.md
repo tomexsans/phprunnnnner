@@ -4,6 +4,11 @@
 
 
 <p align="center">
+  <img src="imgs/laravelDemo.gif" alt="PHPRunnnnner logo"/>
+  <img src="imgs/phpDemo.gif" alt="PHPRunnnnner logo"/>
+</p>
+
+<p align="center">
   <img src="imgs/0_sample_laravel.png" alt="PHPRunnnnner logo"/>
 </p>
 

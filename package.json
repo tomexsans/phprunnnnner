@@ -66,8 +66,7 @@
     "files": [
       "out/main/**/*",
       "out/preload/**/*",
-      "out/renderer/**/*",
-      "logo.png"
+      "out/renderer/**/*"
     ],
     "executableName": "phprunnnnner",
     "linux": {
