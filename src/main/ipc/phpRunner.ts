@@ -3,6 +3,7 @@ import { spawn, execSync } from 'child_process'
 import { writeFileSync, unlinkSync, mkdtempSync, mkdirSync, existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
+import { detectPhpBinary } from '../utils/phpBinary'
 
 export interface PhpRunOptions {
   code: string
@@ -192,13 +193,6 @@ function stripOpeningTag(code: string): string {
   return trimmed
 }
 
-function detectPhpBinary(): string {
-  const candidates = ['php', 'php8.3', 'php8.2', 'php8.1', 'php8.0', 'php7.4']
-  for (const bin of candidates) {
-    try { execSync(`which ${bin}`, { stdio: 'ignore' }); return bin } catch { /* try next */ }
-  }
-  return 'php'
-}
 
 function runScript(
   script: string,

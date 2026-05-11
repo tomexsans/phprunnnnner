@@ -6,6 +6,7 @@ import { registerStoreHandlers } from './ipc/store'
 import { registerDialogHandlers } from './ipc/dialog'
 import { registerSnippetFileHandlers } from './ipc/snippetFiles'
 import { registerTerminalHandlers } from './ipc/terminal'
+import { registerLangServerHandlers } from './ipc/langServer'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -74,6 +75,7 @@ app.whenReady().then(() => {
   registerDialogHandlers()
   registerSnippetFileHandlers()
   registerTerminalHandlers()
+  registerLangServerHandlers()
 
   createWindow()
 

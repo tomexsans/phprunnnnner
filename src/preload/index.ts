@@ -40,6 +40,13 @@ const api = {
     delete:       (filePath: string)         => ipcRenderer.invoke('files:delete', filePath),
     deleteTab:    (id: string)               => ipcRenderer.invoke('files:deleteTab', id),
   },
+  lsp: {
+    init:      (projectPath: string) => ipcRenderer.invoke('lsp:init', projectPath),
+    stop:      ()                    => ipcRenderer.invoke('lsp:stop'),
+    complete:  (prefix: string)      => ipcRenderer.invoke('lsp:complete', prefix),
+    onStatus:  (cb: (status: string) => void) => ipcRenderer.on('lsp:status', (_e, status) => cb(status)),
+    offStatus: () => ipcRenderer.removeAllListeners('lsp:status'),
+  },
   window: {
     minimize: () => ipcRenderer.send('window:minimize'),
     maximize: () => ipcRenderer.send('window:maximize'),

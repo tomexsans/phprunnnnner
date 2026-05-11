@@ -18,6 +18,13 @@ export interface LaravelValidateResult {
   error?: string
 }
 
+export interface CompletionEntry {
+  label: string
+  kind: string
+  detail?: string
+  insertText?: string
+}
+
 export interface ElectronAPI {
   php: {
     run: (options: PhpRunOptions) => Promise<PhpRunResult>
@@ -53,6 +60,13 @@ export interface ElectronAPI {
     read:         (filePath: string)         => Promise<string>
     delete:       (filePath: string)         => Promise<void>
     deleteTab:    (id: string)               => Promise<void>
+  }
+  lsp: {
+    init:      (projectPath: string) => Promise<{ ok: boolean; error?: string }>
+    stop:      () => Promise<void>
+    complete:  (prefix: string) => Promise<CompletionEntry[]>
+    onStatus:  (cb: (status: string) => void) => void
+    offStatus: () => void
   }
   window: {
     minimize: () => void

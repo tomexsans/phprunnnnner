@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import * as monaco from 'monaco-editor'
+import { usePhpCompletion } from '@/composables/usePhpCompletion'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
@@ -77,6 +78,7 @@ function defineTheme(): void {
 onMounted(() => {
   if (!containerRef.value) return
 
+  usePhpCompletion()
   defineTheme()
 
   editor = monaco.editor.create(containerRef.value, {
