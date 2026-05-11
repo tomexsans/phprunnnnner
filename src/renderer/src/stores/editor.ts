@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import type { EditorTab, PhpRunResult, SavedFile } from '@/types'
 
@@ -15,9 +15,14 @@ export const useEditorStore = defineStore('editor', () => {
     }
   ])
   const activeTabId = ref<string>(tabs.value[0].id)
-  const isRunning = ref(false)
-  const lastResult = ref<PhpRunResult | null>(null)
   const untitledCounter = ref(2)
+
+  // Per-tab ephemeral state (not persisted)
+  const tabResults  = reactive(new Map<string, PhpRunResult | null>())
+  const runningTabs = reactive(new Set<string>())
+
+  const lastResult = computed(() => tabResults.get(activeTabId.value) ?? null)
+  const isRunning  = computed(() => runningTabs.has(activeTabId.value))
   const savedFiles = ref<SavedFile[]>([])
   const isSavedFilesOpen = ref(false)
   let _persistenceReady = false
@@ -47,6 +52,8 @@ export const useEditorStore = defineStore('editor', () => {
     if (isLastTab && isUntitled) return
 
     tabs.value.splice(idx, 1)
+    tabResults.delete(id)
+    runningTabs.delete(id)
 
     // Clean up the tab's code file (fire and forget)
     window.electronAPI.files.deleteTab(id)
@@ -78,12 +85,15 @@ export const useEditorStore = defineStore('editor', () => {
     if (tab) tab.title = title
   }
 
-  function setRunning(value: boolean): void {
-    isRunning.value = value
+  function setRunning(value: boolean, tabId?: string): void {
+    const id = tabId ?? activeTabId.value
+    if (value) runningTabs.add(id)
+    else runningTabs.delete(id)
   }
 
-  function setResult(result: PhpRunResult | null): void {
-    lastResult.value = result
+  function setResult(result: PhpRunResult | null, tabId?: string): void {
+    const id = tabId ?? activeTabId.value
+    tabResults.set(id, result)
   }
 
   async function saveTabs(): Promise<void> {

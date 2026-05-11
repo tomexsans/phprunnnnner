@@ -174,8 +174,9 @@ const SHELL_RE = /\b(exec|shell_exec|system|passthru|popen|proc_open|pcntl_exec)
 async function handleRun(): Promise<void> {
   if (!activeTab.value || editorStore.isRunning) return
 
-  const tab  = activeTab.value
-  const code = tab.code
+  const tab   = activeTab.value
+  const tabId = tab.id   // capture before any await — user may switch tabs mid-run
+  const code  = tab.code
 
   if (SHELL_RE.test(code)) {
     const ok = await window.electronAPI.dialog.confirm(
@@ -194,21 +195,21 @@ async function handleRun(): Promise<void> {
   const timeout     = settingsStore.settings.executionTimeout * 1000
   const laravelPath = connection.type === 'laravel' ? connection.projectPath : undefined
 
-  editorStore.setRunning(true)
-  editorStore.setResult(null)
+  editorStore.setRunning(true, tabId)
+  editorStore.setResult(null, tabId)
 
   try {
     const result = await window.electronAPI.php.run({ code, phpBinary, timeout, laravelPath })
-    editorStore.setResult(result)
+    editorStore.setResult(result, tabId)
   } catch (err) {
     editorStore.setResult({
       output: '',
       error: String(err),
       exitCode: 1,
       executionTime: 0
-    })
+    }, tabId)
   } finally {
-    editorStore.setRunning(false)
+    editorStore.setRunning(false, tabId)
   }
 }
 
